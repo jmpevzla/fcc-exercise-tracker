@@ -1,15 +1,15 @@
 const express = require('express')
 const app = express()
 const cors = require('cors')
-const bodyParser = require('body-parser');
-const mongoose = require('mongoose');
+const bodyParser = require('body-parser')
+const mongoose = require('mongoose')
 
 require('dotenv').config()
 
-main().catch(err => console.error(err));
+main().catch(err => console.error(err))
 
 async function main() {
-  await mongoose.connect(process.env.MONGO_URL);
+  await mongoose.connect(process.env.MONGO_URL)
 }
 
 const userSchema = mongoose.Schema({
@@ -28,7 +28,7 @@ const User = mongoose.model('User', userSchema)
 
 app.use(cors())
 app.use(express.static('public'))
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.urlencoded({ extended: false }))
 app.get('/', (req, res) => {
   res.sendFile(__dirname + '/views/index.html')
 });
@@ -67,10 +67,13 @@ app.route('/api/users')
 })
 
 function createExercise(ex) {
+  const userTimeZone = ex.date.getTimezoneOffset() * 60000
+  const date = new Date(ex.date.getTime() + userTimeZone)
+  
   return {
     description: ex.description,
     duration: ex.duration,
-    date: ex.date.toDateString()
+    date: date.toDateString() 
   }
 }
 
